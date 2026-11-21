@@ -26,25 +26,32 @@ Your objective is simple: survive as long as possible.
 
 ## 🛠️ Built With
 
-- [Godot Engine](https://godotengine.org/)
-- GDScript
-- 2D game assets
+- Google AI Studio
+- Gemini AI
 
-## 📸 Screenshots
+## 🤖 Development
 
-Screenshots coming soon!
+Iron Crown was developed with assistance from Google's AI-powered development environment, Google AI Studio.
 
-## 🚧 Development Status
+## 🎮 Play the Game
 
-Iron Crown is currently in development.
+Play Iron Crown on itch.io:
 
-Features, gameplay mechanics, and content may change as development progresses.
+https://hubahuba.itch.io/iron-crown
 
-## 🎯 Objective
+## 💻 Source Code
 
-Survive for as long as possible.
+This project is open source.
 
-There is no escape from Iron Crown.
+Repository: https://github.com/hubahuba2016/Iron-Crown
+
+## 📜 License
+
+Iron Crown is free and open-source software licensed under the **GNU General Public License v3.0 (GPL-3.0)**.
+
+You are free to use, study, modify, and distribute this project under the terms of the license.
+
+See [LICENSE](LICENSE) for the full license text.
 
 ## 👨‍💻 Developer
 
@@ -54,13 +61,8 @@ There is no escape from Iron Crown.
 - GitHub: https://github.com/hubahuba2016/
 - itch.io: https://hubahuba.itch.io/
 
-## 📜 License
-
-Iron Crown is free and open-source software licensed under the **GNU General Public License v3.0 (GPL-3.0)**.
-
-You are free to use, study, modify, and distribute this project under the terms of the license.
-
-See [LICENSE](LICENSE) for the full license text.
 ---
+
+**There is no escape from Iron Crown.**
 
 **How long can you survive?**
