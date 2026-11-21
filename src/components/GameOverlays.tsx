@@ -66,11 +66,11 @@ export function GameOverlays({
             </div>
             <div className="rounded-lg border border-slate-800 bg-slate-950/60 p-3">
               <div className="font-semibold text-slate-100">Fire Cannon</div>
-              <div className="mt-1 font-mono text-slate-400">Click / J / F</div>
+              <div className="mt-1 font-mono text-slate-400">L-Click / J / F</div>
             </div>
             <div className="rounded-lg border border-slate-800 bg-slate-950/60 p-3">
               <div className="font-semibold text-slate-100">Energy Shield</div>
-              <div className="mt-1 font-mono text-slate-400">Shift / K</div>
+              <div className="mt-1 font-mono text-slate-400">R-Click / Shift / K</div>
             </div>
           </div>
 
