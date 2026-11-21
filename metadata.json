@@ -1,0 +1,8 @@
+{
+  "name": "Iron Crown",
+  "description": "An endless side-scrolling sci-fi platformer where you pilot a crowned tank-bot, leap across orbital chasms, deploy energy shields, and blast mechanical enemies for high scores.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
