@@ -25,7 +25,7 @@ export function GameOverlays({
           <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-start">
             <div className="flex h-36 w-36 shrink-0 items-center justify-center rounded-xl border border-slate-700/60 bg-slate-950/70 p-3">
               <img
-                src="/assets/aistudio/hero_78bebaf3.png"
+                src="./assets/aistudio/hero_78bebaf3.png"
                 alt="Iron Crown tank hero"
                 className="h-full w-full object-contain"
                 referrerPolicy="no-referrer"

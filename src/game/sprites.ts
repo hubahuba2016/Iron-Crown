@@ -19,11 +19,11 @@ export interface GameSprites {
 }
 
 const ASSET_PATHS = {
-  heroIdle: '/assets/aistudio/hero_78bebaf3.png',
-  heroJump: '/assets/aistudio/HeroJump_0dc99a97.png',
-  heroShield: '/assets/aistudio/heroShieldOn_aeaae261.png',
-  hoverPlatform: '/assets/aistudio/hovering-platform_7df7dccf.png',
-  platformComplete: '/assets/aistudio/platformcomplete_264ac81b.png',
+  heroIdle: './assets/aistudio/hero_78bebaf3.png',
+  heroJump: './assets/aistudio/HeroJump_0dc99a97.png',
+  heroShield: './assets/aistudio/heroShieldOn_aeaae261.png',
+  hoverPlatform: './assets/aistudio/hovering-platform_7df7dccf.png',
+  platformComplete: './assets/aistudio/platformcomplete_264ac81b.png',
 } as const;
 
 function loadImage(src: string): Promise<HTMLImageElement> {
