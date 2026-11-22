@@ -458,8 +458,8 @@ export class IronCrownEngine {
     if (deck.width > 300 && Math.random() < 0.52 + difficulty * 0.28) {
       const isHeavy = difficulty > 0.25 && deck.width > 390 && Math.random() < 0.24 + difficulty * 0.18;
       const kind: EnemyKind = isHeavy ? 'heavy' : 'walker';
-      const w = isHeavy ? 66 : 48;
-      const h = isHeavy ? 68 : 48;
+      const w = isHeavy ? 86 : 68;
+      const h = isHeavy ? 82 : 60;
       const ex = deck.x + Math.max(150, deck.width * 0.48);
       this.enemies.push({
         id: this.nextEntityId++,
@@ -485,7 +485,7 @@ export class IronCrownEngine {
     // 2. Aerial Scout Drone
     if (Math.random() < 0.42 + difficulty * 0.34) {
       const droneX = deck.x + deck.width * (0.2 + Math.random() * 0.65);
-      const droneY = deck.y - 125 - Math.random() * 90;
+      const droneY = deck.y - 130 - Math.random() * 90;
       this.enemies.push({
         id: this.nextEntityId++,
         kind: 'drone',
@@ -493,8 +493,8 @@ export class IronCrownEngine {
         y: droneY,
         vx: -40 - difficulty * 40,
         vy: 0,
-        width: 44,
-        height: 36,
+        width: 62,
+        height: 48,
         hp: 2,
         maxHp: 2,
         hitFlashTimer: 0,
@@ -510,11 +510,11 @@ export class IronCrownEngine {
         id: this.nextEntityId++,
         kind: 'interceptor',
         x: deck.x - gapWidth * 0.25,
-        y: deck.y - 85 - Math.random() * 55,
+        y: deck.y - 90 - Math.random() * 55,
         vx: 0,
         vy: 0,
-        width: 42,
-        height: 42,
+        width: 54,
+        height: 54,
         hp: 1,
         maxHp: 1,
         hitFlashTimer: 0,
@@ -1370,110 +1370,181 @@ export class IronCrownEngine {
 
   private renderEnemies(ctx: CanvasRenderingContext2D): void {
     for (const e of this.enemies) {
-      ctx.save();
       const cx = e.x + e.width * 0.5;
       const cy = e.y + e.height * 0.5;
       const flash = e.hitFlashTimer > 0;
+      const spriteAsset = this.sprites.enemies[e.kind];
 
-      if (e.kind === 'drone') {
-        // Aerial Scout Drone
-        ctx.fillStyle = flash ? '#F8FAFC' : '#334155';
-        ctx.strokeStyle = '#1E293B';
-        ctx.lineWidth = 2;
+      ctx.save();
+
+      // Telegraph laser line for armed Gap Interceptor before dash
+      if (e.kind === 'interceptor' && e.dashArmed && !e.dashing) {
+        ctx.strokeStyle = 'rgba(239, 68, 68, 0.5)';
+        ctx.setLineDash([7, 6]);
+        ctx.lineWidth = 1.5;
         ctx.beginPath();
-        ctx.roundRect(e.x + 4, e.y + 8, e.width - 8, e.height - 14, 10);
-        ctx.fill();
+        ctx.moveTo(e.x + 8, cy);
+        ctx.lineTo(0, cy);
         ctx.stroke();
-
-        // Top rotor blades
-        const rotorSpan = 16 + Math.sin(this.worldTime * 35) * 8;
-        ctx.fillStyle = '#94A3B8';
-        ctx.fillRect(cx - rotorSpan, e.y + 3, rotorSpan * 2, 3);
-
-        // Glowing crimson cyclops optic
-        ctx.fillStyle = flash ? '#FFFFFF' : '#EF4444';
-        ctx.beginPath();
-        ctx.arc(e.x + 14, cy + 2, 6.5, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = '#FCA5A5';
-        ctx.beginPath();
-        ctx.arc(e.x + 12, cy + 1, 2.2, 0, Math.PI * 2);
-        ctx.fill();
-      } else if (e.kind === 'walker' || e.kind === 'heavy') {
-        const isHeavy = e.kind === 'heavy';
-        // Treads
-        ctx.fillStyle = '#1E293B';
-        ctx.beginPath();
-        ctx.roundRect(e.x + 2, e.y + e.height - 14, e.width - 4, 14, 6);
-        ctx.fill();
-
-        // Armored chassis
-        ctx.fillStyle = flash ? '#FFFFFF' : isHeavy ? '#475569' : '#3B4A61';
-        ctx.strokeStyle = '#0F172A';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.roundRect(e.x + 6, e.y + 6, e.width - 12, e.height - 18, 6);
-        ctx.fill();
-        ctx.stroke();
-
-        // Shoulder armor plates on heavy
-        if (isHeavy) {
-          ctx.fillStyle = flash ? '#FFFFFF' : '#F59E0B';
-          ctx.fillRect(e.x + 8, e.y + 2, e.width - 16, 6);
-        }
-
-        // Cannon barrel pointing left
-        ctx.fillStyle = '#64748B';
-        ctx.fillRect(e.x - 10, e.y + e.height * 0.42, 18, isHeavy ? 10 : 7);
-
-        // Crimson sensor visor
-        ctx.fillStyle = isHeavy ? '#F97316' : '#EF4444';
-        ctx.fillRect(e.x + 10, e.y + 16, isHeavy ? 16 : 12, 6);
-      } else if (e.kind === 'interceptor') {
-        // Dive mine with armed telegraph laser
-        if (e.dashArmed && !e.dashing) {
-          ctx.strokeStyle = 'rgba(239, 68, 68, 0.45)';
-          ctx.setLineDash([6, 6]);
-          ctx.lineWidth = 1.5;
-          ctx.beginPath();
-          ctx.moveTo(e.x, cy);
-          ctx.lineTo(0, cy);
-          ctx.stroke();
-          ctx.setLineDash([]);
-        }
-
-        ctx.translate(cx, cy);
-        ctx.rotate(this.worldTime * 3);
-        ctx.fillStyle = flash ? '#FFFFFF' : '#334155';
-        ctx.beginPath();
-        for (let i = 0; i < 8; i++) {
-          const ang = (Math.PI * 2 * i) / 8;
-          const r = i % 2 === 0 ? e.width * 0.56 : e.width * 0.34;
-          if (i === 0) ctx.moveTo(Math.cos(ang) * r, Math.sin(ang) * r);
-          else ctx.lineTo(Math.cos(ang) * r, Math.sin(ang) * r);
-        }
-        ctx.closePath();
-        ctx.fill();
-
-        ctx.fillStyle = e.dashing ? '#F97316' : '#EF4444';
-        ctx.beginPath();
-        ctx.arc(0, 0, 7, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.setLineDash([]);
       }
 
-      // Enemy HP mini-bar when damaged
-      if (e.hp < e.maxHp) {
-        const bw = e.width;
-        const bx = e.x;
-        const by = e.y - 10;
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
-        ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
-        ctx.fillRect(bx, by, bw, 4);
-        ctx.fillStyle = '#F59E0B';
-        ctx.fillRect(bx, by, bw * Math.max(0, e.hp / e.maxHp), 4);
+      if (spriteAsset) {
+        const { canvas, flashCanvas, bounds } = spriteAsset;
+
+        // Ground shadow for deck-bound enemies
+        if (e.kind === 'walker' || e.kind === 'heavy') {
+          ctx.fillStyle = 'rgba(2, 6, 23, 0.52)';
+          ctx.beginPath();
+          ctx.ellipse(
+            cx,
+            e.y + e.height + 1,
+            e.width * 0.44,
+            5,
+            0,
+            0,
+            Math.PI * 2
+          );
+          ctx.fill();
+        }
+
+        // Preserve sprite aspect ratio and align bottom treads flush for ground units
+        const padScale = e.kind === 'heavy' ? 1.12 : e.kind === 'walker' ? 1.1 : 1.14;
+        const targetH = e.height * padScale;
+        const drawH = targetH;
+        const drawW = (bounds.width / bounds.height) * drawH;
+        const drawX = cx - drawW * 0.5;
+        const treadBob =
+          e.kind === 'walker' || e.kind === 'heavy'
+            ? Math.sin(this.worldTime * 18 + e.phase) * 0.9
+            : 0;
+        const drawY =
+          e.kind === 'walker' || e.kind === 'heavy'
+            ? e.y + e.height - drawH + 3 + treadBob
+            : cy - drawH * 0.5;
+
+        // Thruster exhaust glow behind dashing interceptor or hovering drone
+        if (e.kind === 'interceptor' && e.dashing) {
+          ctx.save();
+          ctx.globalCompositeOperation = 'lighter';
+          const exhaustGrad = ctx.createRadialGradient(
+            drawX + drawW - 4,
+            cy,
+            2,
+            drawX + drawW + 10,
+            cy,
+            22
+          );
+          exhaustGrad.addColorStop(0, 'rgba(254, 240, 138, 0.9)');
+          exhaustGrad.addColorStop(0.5, 'rgba(249, 115, 22, 0.55)');
+          exhaustGrad.addColorStop(1, 'rgba(249, 115, 22, 0)');
+          ctx.fillStyle = exhaustGrad;
+          ctx.beginPath();
+          ctx.arc(drawX + drawW + 4, cy, 20, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        } else if (e.kind === 'drone') {
+          ctx.save();
+          ctx.globalCompositeOperation = 'lighter';
+          const hoverGlow = 0.25 + Math.sin(this.worldTime * 16 + e.phase) * 0.1;
+          ctx.fillStyle = `rgba(239, 68, 68, ${hoverGlow})`;
+          ctx.beginPath();
+          ctx.ellipse(cx + 8, e.y + e.height - 2, 16, 6, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+
+        // Subtle pitch tilt for aerial units
+        if (e.kind === 'drone' || e.kind === 'interceptor') {
+          const tilt =
+            e.kind === 'interceptor'
+              ? e.dashing
+                ? -0.1
+                : Math.sin(this.worldTime * 5 + e.phase) * 0.06
+              : Math.sin(e.phase) * 0.05;
+          ctx.translate(cx, cy);
+          ctx.rotate(tilt);
+          ctx.translate(-cx, -cy);
+        }
+
+        ctx.drawImage(
+          canvas,
+          bounds.minX,
+          bounds.minY,
+          bounds.width,
+          bounds.height,
+          drawX,
+          drawY,
+          drawW,
+          drawH
+        );
+
+        if (flash) {
+          ctx.save();
+          ctx.globalAlpha = 0.72;
+          ctx.drawImage(
+            flashCanvas,
+            bounds.minX,
+            bounds.minY,
+            bounds.width,
+            bounds.height,
+            drawX,
+            drawY,
+            drawW,
+            drawH
+          );
+          ctx.restore();
+        }
+      } else {
+        // Fallback procedural shapes if sprite fails to load
+        if (e.kind === 'drone') {
+          ctx.fillStyle = flash ? '#F8FAFC' : '#334155';
+          ctx.strokeStyle = '#1E293B';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.roundRect(e.x + 4, e.y + 8, e.width - 8, e.height - 14, 10);
+          ctx.fill();
+          ctx.stroke();
+          ctx.fillStyle = flash ? '#FFFFFF' : '#EF4444';
+          ctx.beginPath();
+          ctx.arc(e.x + 14, cy + 2, 6.5, 0, Math.PI * 2);
+          ctx.fill();
+        } else if (e.kind === 'walker' || e.kind === 'heavy') {
+          const isHeavy = e.kind === 'heavy';
+          ctx.fillStyle = '#1E293B';
+          ctx.beginPath();
+          ctx.roundRect(e.x + 2, e.y + e.height - 14, e.width - 4, 14, 6);
+          ctx.fill();
+          ctx.fillStyle = flash ? '#FFFFFF' : isHeavy ? '#475569' : '#3B4A61';
+          ctx.beginPath();
+          ctx.roundRect(e.x + 6, e.y + 6, e.width - 12, e.height - 18, 6);
+          ctx.fill();
+          ctx.fillStyle = isHeavy ? '#F97316' : '#EF4444';
+          ctx.fillRect(e.x + 10, e.y + 16, isHeavy ? 16 : 12, 6);
+        } else {
+          ctx.fillStyle = flash ? '#FFFFFF' : '#334155';
+          ctx.beginPath();
+          ctx.arc(cx, cy, e.width * 0.42, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = e.dashing ? '#F97316' : '#EF4444';
+          ctx.beginPath();
+          ctx.arc(cx, cy, 7, 0, Math.PI * 2);
+          ctx.fill();
+        }
       }
 
       ctx.restore();
+
+      // Enemy HP mini-bar when damaged (drawn outside rotated transforms)
+      if (e.hp < e.maxHp) {
+        const bw = e.width * 0.85;
+        const bx = cx - bw * 0.5;
+        const by = e.y - 10;
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+        ctx.fillRect(bx, by, bw, 4);
+        ctx.fillStyle = e.kind === 'heavy' ? '#F97316' : '#F59E0B';
+        ctx.fillRect(bx, by, bw * Math.max(0, e.hp / e.maxHp), 4);
+      }
     }
   }
 

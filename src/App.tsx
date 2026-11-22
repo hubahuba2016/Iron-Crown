@@ -51,6 +51,7 @@ export default function App() {
   const [gameState, setGameState] = useState<GameState>('TITLE_MENU');
   const [hud, setHud] = useState<HudSnapshot>(() => createInitialHud());
   const [muted, setMuted] = useState<boolean>(() => sound.isMuted());
+  const [musicEnabled, setMusicEnabled] = useState<boolean>(() => sound.isMusicEnabled());
 
   const gameOverAtRef = useRef<number>(0);
 
@@ -70,6 +71,7 @@ export default function App() {
   const handleStart = useCallback(() => {
     const engine = engineRef.current;
     if (!engine) return;
+    sound.unlock();
     engine.startNewRun();
     syncHudFromEngine();
   }, [syncHudFromEngine]);
@@ -82,6 +84,7 @@ export default function App() {
       engine.setState('PAUSED');
       syncHudFromEngine();
     } else if (current === 'PAUSED') {
+      sound.unlock();
       engine.setState('PLAYING');
       syncHudFromEngine();
     }
@@ -90,6 +93,7 @@ export default function App() {
   const handleResume = useCallback(() => {
     const engine = engineRef.current;
     if (!engine) return;
+    sound.unlock();
     engine.setState('PLAYING');
     syncHudFromEngine();
   }, [syncHudFromEngine]);
@@ -97,6 +101,7 @@ export default function App() {
   const handleRestart = useCallback(() => {
     const engine = engineRef.current;
     if (!engine) return;
+    sound.unlock();
     engine.startNewRun();
     syncHudFromEngine();
   }, [syncHudFromEngine]);
@@ -104,6 +109,29 @@ export default function App() {
   const handleToggleMute = useCallback(() => {
     const nextMuted = sound.toggleMute();
     setMuted(nextMuted);
+  }, []);
+
+  const handleToggleMusic = useCallback(() => {
+    const nextMusic = sound.toggleMusic();
+    setMusicEnabled(nextMusic);
+  }, []);
+
+  // Keep background music synchronized with current game state
+  useEffect(() => {
+    sound.setGameState(gameState);
+  }, [gameState]);
+
+  // Unlock Web Audio context on first user gesture for background music
+  useEffect(() => {
+    const unlockAudio = () => {
+      sound.unlock();
+    };
+    window.addEventListener('pointerdown', unlockAudio, { passive: true });
+    window.addEventListener('keydown', unlockAudio, { passive: true });
+    return () => {
+      window.removeEventListener('pointerdown', unlockAudio);
+      window.removeEventListener('keydown', unlockAudio);
+    };
   }, []);
 
   // Initialize sprites, engine, and main animation loop
@@ -327,8 +355,10 @@ export default function App() {
           hud={hud}
           gameState={gameState}
           muted={muted}
+          musicEnabled={musicEnabled}
           onTogglePause={handleTogglePause}
           onToggleMute={handleToggleMute}
+          onToggleMusic={handleToggleMusic}
         />
       )}
 

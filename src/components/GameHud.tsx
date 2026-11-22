@@ -1,20 +1,24 @@
-import { Heart, Pause, Play, Shield, Volume2, VolumeX } from 'lucide-react';
+import { Heart, Music, Pause, Play, Shield, Volume2, VolumeX } from 'lucide-react';
 import type { GameState, HudSnapshot } from '../game/types';
 
 interface GameHudProps {
   hud: HudSnapshot;
   gameState: GameState;
   muted: boolean;
+  musicEnabled: boolean;
   onTogglePause: () => void;
   onToggleMute: () => void;
+  onToggleMusic: () => void;
 }
 
 export function GameHud({
   hud,
   gameState,
   muted,
+  musicEnabled,
   onTogglePause,
   onToggleMute,
+  onToggleMusic,
 }: GameHudProps) {
   const hpRatio = Math.max(0, Math.min(1, hud.hp / hud.maxHp));
   const hpStatus =
@@ -148,6 +152,26 @@ export function GameHud({
           </div>
 
           <div className="pointer-events-auto flex items-center gap-2">
+            <button
+              type="button"
+              onClick={onToggleMusic}
+              aria-label={musicEnabled ? 'Disable music' : 'Enable music'}
+              title={musicEnabled ? 'Music On' : 'Music Off'}
+              className={`relative flex h-10 w-10 items-center justify-center rounded-lg border transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400 ${
+                musicEnabled && !muted
+                  ? 'border-sky-500/50 bg-slate-900/90 text-sky-300 hover:border-sky-400 hover:bg-slate-800'
+                  : 'border-slate-700/70 bg-slate-900/90 text-slate-500 hover:border-slate-500 hover:bg-slate-800 hover:text-slate-300'
+              }`}
+            >
+              <Music className="h-4 w-4" />
+              {!musicEnabled && (
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute h-0.5 w-6 rotate-45 rounded-full bg-slate-400"
+                />
+              )}
+            </button>
+
             <button
               type="button"
               onClick={onToggleMute}
